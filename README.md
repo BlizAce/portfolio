@@ -2,28 +2,40 @@
 
 Static portfolio site — no build step, no dependencies, all assets self-contained.
 
-## Deploy to GitLab Pages
+**Live:** https://blizace.github.io/portfolio/
 
-1. Create a new (blank) project and push this folder's contents to it:
-   ```sh
-   cd portfolio-site
-   git init && git remote add origin <your-gitlab-url>/portfolio.git
-   git add . && git commit -m "portfolio site" && git push -u origin main
-   ```
-2. The included `.gitlab-ci.yml` publishes everything under `public/`.
-3. Site appears at `https://<namespace>.pages.<domain>/portfolio/` (project pages URL).
+## Deploying
 
-All paths are relative, so it works at the domain root or under a subpath.
+### GitHub Pages (primary — public)
+Pages is enabled for deploys from the `main` branch root. Push and it publishes:
+```sh
+git add . && git commit -m "update" && git push
+```
+
+### GitLab (internal server only — not public-facing)
+The `.gitlab-ci.yml` publishes to `public/` on the internal instance; the file is
+git-ignored for GitHub so it never ships there.
+
+All paths are relative, so the site works at a domain root or under any subpath.
 
 ## Local preview
 
 ```sh
-python3 -m http.server 8090
-# open http://localhost:8090
+python3 -m http.server 8090   # open http://localhost:8090
 ```
 
-## Regenerating demo GIFs
+## Papers
 
-The four Penguin Command scenes and the Spider Net flow animation are rendered
-by `../tools/make_gifs.py` (PIL frames → ffmpeg palette-optimised GIF). Posters
+Downloadable PDFs live in `assets/papers/`, generated from the research markdown
+with pandoc + weasyprint (styles: see header of any build). Regenerate with:
+```sh
+pandoc PAPER.md -f markdown+tex_math_dollars+pipe_tables --standalone \
+  --embed-resources --resource-path=. -c paper.css -M title="…" -o out.html
+weasyprint out.html chapman-YYYY-slug.pdf
+```
+
+## Demo GIFs
+
+The four Penguin Command scenes and the Spider Net flow animation are rendered by
+`../tools/make_gifs.py` (PIL frames → ffmpeg palette-optimised GIF). Posters
 (`*-poster.png`) are auto-saved for the no-motion fallback.
