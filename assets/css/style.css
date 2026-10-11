@@ -226,3 +226,26 @@ body.no-motion #neural-canvas{display:none}
   .brand span{font-size:.95rem}
   .hero-inner{padding:60px 0}
 }
+
+/* ---------- detail modals ---------- */
+.modal{position:fixed;inset:0;z-index:110;display:none;place-items:center;padding:4vh 5vw;
+  background:rgba(5,3,14,.8);backdrop-filter:blur(6px)}
+.modal.open{display:grid}
+.modal-card{background:var(--panel);border:1px solid var(--violet);border-radius:var(--r-lg);max-width:640px;
+  width:100%;max-height:84vh;overflow:auto;padding:34px 38px;position:relative;box-shadow:var(--shadow),var(--glow);
+  animation:modal-in .28s}
+.modal-card h3{font-size:1.35rem;margin-bottom:6px;padding-right:44px}
+.modal-card .m-kicker{font-family:var(--font-mono);font-size:.74rem;letter-spacing:2px;text-transform:uppercase;color:var(--cyan)}
+.modal-x{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:10px;background:var(--panel2);
+  border:1px solid var(--line);color:var(--ink-dim);cursor:pointer;font-size:.95rem;transition:.2s}
+.modal-x:hover{color:var(--ink);border-color:var(--violet)}
+.modal-body{color:var(--ink-dim);font-size:.95rem;margin-top:14px}
+.modal-body p{margin-bottom:10px}
+.modal-body ul{margin:0 0 12px 20px;display:flex;flex-direction:column;gap:7px}
+.modal-body b,.modal-body strong{color:var(--ink)}
+.modal-body code{background:var(--panel2);padding:1px 6px;border-radius:5px;font-size:.85em;color:var(--violet-2)}
+.modal-card .btn{margin-top:8px}
+@keyframes modal-in{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+[data-detail]{cursor:pointer}
+.tbl tbody tr[data-detail]:hover td:first-child{text-decoration:underline dotted var(--violet);text-underline-offset:5px}
+.tbl tbody tr[data-detail] td:last-child::after{content:" ⓘ";color:var(--ink-faint)}

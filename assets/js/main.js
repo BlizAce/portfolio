@@ -155,6 +155,34 @@
     document.addEventListener("sc:motion", swap);
   });
 
+  /* ---------- detail modals ---------- */
+  const modal = document.createElement("div");
+  modal.className = "modal";
+  modal.innerHTML = `<div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button class="modal-x" aria-label="Close">✕</button>
+    <span class="m-kicker"></span><h3 id="modal-title"></h3><div class="modal-body"></div></div>`;
+  body.appendChild(modal);
+  function closeModal() { modal.classList.remove("open"); }
+  function openModal(kicker, title, html) {
+    modal.querySelector(".m-kicker").textContent = kicker || "";
+    modal.querySelector("h3").textContent = title || "";
+    modal.querySelector(".modal-body").innerHTML = html;
+    modal.classList.add("open");
+  }
+  modal.addEventListener("click", e => {
+    if (e.target === modal || e.target.classList.contains("modal-x")) closeModal();
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+  document.querySelectorAll("[data-detail]").forEach(el => {
+    el.setAttribute("tabindex", "0"); el.setAttribute("role", "button");
+    const open = () => {
+      const src = document.getElementById(el.dataset.detail);
+      if (src) openModal(el.dataset.kicker || "", el.dataset.title || "", src.innerHTML);
+    };
+    el.addEventListener("click", e => { if (!e.target.closest("a")) open(); });
+    el.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } });
+  });
+
   /* ---------- footer year ---------- */
   document.querySelectorAll("[data-year]").forEach(el => el.textContent = new Date().getFullYear());
 })();

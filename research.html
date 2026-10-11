@@ -37,20 +37,41 @@
 
 <section style="padding-top:20px">
   <div class="wrap">
-    <div class="sec-head reveal"><span class="eyebrow">// the eight gates</span><h2>Controls, what they caught, what they cost</h2></div>
+    <div class="sec-head reveal"><span class="eyebrow">// the eight gates</span><h2>Controls, what they caught, what they cost</h2>
+      <p>Click any control for the full card — rule, error class, the real number it destroyed, and procedure.</p></div>
     <table class="tbl reveal">
       <thead><tr><th>#</th><th>Control</th><th>Catches</th><th>Cost to run</th></tr></thead>
       <tbody>
-        <tr><td>C1</td><td>Init-time RMS pre-flight</td><td>Silent forward-map divergence — a model scoring 59.8% with a 292× residual growth profile, dead at high routing temperature.</td><td>~1 min · one forward pass, no optimizer step</td></tr>
-        <tr><td>C2</td><td>Teaching-leakage default hypothesis</td><td>Supervision leaking into the eval channel. Default assumption: good accuracy is guilty until a teaching-off probe says otherwise.</td><td>One inference probe with washout period</td></tr>
-        <tr><td>C3</td><td>Degree-matched shuffled control</td><td>Structure claims where the topology isn't load-bearing — shuffle the wiring, keep degrees, see what survives.</td><td>1 retrain per headline claim</td></tr>
-        <tr><td>C4</td><td>Matched training budget</td><td>+12.2 points of pure training length misread as an architecture win.</td><td>Free — it's arithmetic you skipped</td></tr>
-        <tr><td>C5</td><td>Oracle bound as direction-killer</td><td>Adaptive-depth dreams where a perfect depth oracle gains +0.00 points. The gap doesn't exist; stop building for it.</td><td>One analysis script</td></tr>
-        <tr><td>C6</td><td>Routed-fraction threshold</td><td>"MoE wins" claims where routing touched a fraction of items too small to matter.</td><td>Logging you should already have</td></tr>
-        <tr><td>C7</td><td>Plateau-matched generalisation</td><td>Comparisons made on the training slope instead of both curves' plateaus.</td><td>Run to plateau — then compare</td></tr>
-        <tr><td>C8</td><td>Seed replication</td><td>The single lucky seed. Applies to every headline claim, no exceptions.</td><td>3–5 seeds; embarrassingly parallel</td></tr>
+        <tr data-detail="ctl-c1" data-kicker="// control c1 · forward computation" data-title="Init-time RMS pre-flight"><td>C1</td><td>Init-time RMS pre-flight</td><td>Silent forward-map divergence — a model scoring 59.8% with a 292× residual growth profile, dead at high routing temperature.</td><td>~1 min · one forward pass, no optimizer step</td></tr>
+        <tr data-detail="ctl-c2" data-kicker="// control c2 · measurement integrity" data-title="Teaching-leakage default hypothesis"><td>C2</td><td>Teaching-leakage default hypothesis</td><td>Supervision leaking into the eval channel. Default assumption: good accuracy is guilty until a teaching-off probe says otherwise.</td><td>One inference probe with washout period</td></tr>
+        <tr data-detail="ctl-c3" data-kicker="// control c3 · load-bearingness" data-title="Degree-matched shuffled control"><td>C3</td><td>Degree-matched shuffled control</td><td>Structure claims where the topology isn't load-bearing — shuffle the wiring, keep degrees, see what survives.</td><td>1 retrain per headline claim</td></tr>
+        <tr data-detail="ctl-c4" data-kicker="// control c4 · comparison validity" data-title="Matched training budget"><td>C4</td><td>Matched training budget</td><td>+12.2 points of pure training length misread as an architecture win.</td><td>Free — it's arithmetic you skipped</td></tr>
+        <tr data-detail="ctl-c5" data-kicker="// control c5 · load-bearingness" data-title="Oracle bound as direction-killer"><td>C5</td><td>Oracle bound as direction-killer</td><td>Adaptive-depth dreams where a perfect depth oracle gains +0.00 points. The gap doesn't exist; stop building for it.</td><td>One analysis script</td></tr>
+        <tr data-detail="ctl-c6" data-kicker="// control c6 · load-bearingness" data-title="Routed-fraction threshold"><td>C6</td><td>Routed-fraction threshold</td><td>"MoE wins" claims where routing touched a fraction of items too small to matter.</td><td>Logging you should already have</td></tr>
+        <tr data-detail="ctl-c7" data-kicker="// control c7 · comparison validity" data-title="Plateau-matched generalisation"><td>C7</td><td>Plateau-matched generalisation</td><td>Comparisons made on the training slope instead of both curves' plateaus.</td><td>Run to plateau — then compare</td></tr>
+        <tr data-detail="ctl-c8" data-kicker="// control c8 · comparison validity" data-title="Seed replication"><td>C8</td><td>Seed replication</td><td>The single lucky seed. Applies to every headline claim, no exceptions.</td><td>3–5 seeds; embarrassingly parallel</td></tr>
       </tbody>
     </table>
+    <div hidden>
+      <div id="ctl-c1"><p><b>Rule:</b> log per-level <code>RMS(x)</code> at random init with no optimizer step; refuse any config whose final-level RMS exceeds ~10² before spending a training step on it.</p>
+        <p><b>What it caught:</b> <code>D128_long</code> reached 59.8% exact match on character arithmetic with a converging loss curve — while its residual stream grew 292× from level 1 to 7. The mechanism: routed experts read the raw residual; SwiGLU responds as ‖x‖², so each update scales with the state it's added to. fp32 doesn't rescue it. Cause was one missing LayerNorm.</p>
+        <p><b>The lesson:</b> a model reaching high accuracy is not evidence that its forward map is bounded. The fix moved headline accuracy +0.2 points and eliminated every NaN (10.34% of logged steps → 0/234) — real, fully explained, orthogonal to the metric.</p></div>
+      <div id="ctl-c2"><p><b>Rule:</b> whenever accuracy looks good, the default hypothesis is that a path still exists by which the training signal reaches the measured variable. No number counts until a teaching-off inference probe (washout + late-trial scoring window) has run.</p>
+        <p><b>What it caught:</b> in DIH-S, five separate leaks and one representability failure all produced accuracy that was real arithmetic on real measurements — and meaningless as evidence. Removing one leak created another; the decoder target wasn't even representable, so the metric measured an initialisation constant.</p>
+        <p><b>Corollary:</b> an unmeasured claim is not a low-scoring claim. Absent evidence must never be silently converted into a weak positive or negative.</p></div>
+      <div id="ctl-c3"><p><b>Rule:</b> before crediting architecture, shuffle the topology while matching node degrees. If performance survives the shuffle, your structure story is about degree statistics, not your design.</p>
+        <p><b>What it caught:</b> GEODE/DIH-S connectivity claims that survived every ablation except this one — shuffled graphs with matched degree distributions performed equivalently, killing "the wiring matters" conclusions that had already been drafted.</p></div>
+      <div id="ctl-c4"><p><b>Rule:</b> no comparison ships unless both sides trained for the number of steps named in the caption, one shared optimizer and schedule.</p>
+        <p><b>What it caught:</b> Paper 1 measured +12.2 points of exact match from training length alone — enough to manufacture or destroy any architecture effect at this scale. Several early "dense wins" were too generous to us; the fix rewrote the results table.</p></div>
+      <div id="ctl-c5"><p><b>Rule:</b> before building adaptive behaviour, compute the oracle bound: the best possible per-item decision given your own measured curves. If the oracle's gain is ~0, no learned policy can find what isn't there.</p>
+        <p><b>What it caught:</b> the entire adaptive-depth program. The oracle's maximum attainable accuracy equalled the best fixed depth to two decimal places (61.87% vs 61.87%, +0.00 points) — and extra depth actively hurt. The routing machinery was healthy; routing simply wasn't where the compute is.</p></div>
+      <div id="ctl-c6"><p><b>Rule:</b> report the fraction of items where routing actually changed execution. Below threshold, "MoE wins" claims describe a rounding error, not an architecture.</p>
+        <p><b>What it caught:</b> HMoE funnel-routing improvements that turned out to ride on routed fractions too small for any mechanism to exploit at scale.</p></div>
+      <div id="ctl-c7"><p><b>Rule:</b> compare generalisation at both curves' plateaus, never mid-slope. Slope comparisons reward faster overfitting.</p>
+        <p><b>What it caught:</b> HMoE comparisons that flipped sign once both models plateaued — the "loser" was simply slower to converge, not worse.</p></div>
+      <div id="ctl-c8"><p><b>Rule:</b> every headline claim replicates across 3–5 seeds; report the spread, not the best run.</p>
+        <p><b>What it caught:</b> Paper 3's seed-to-seed variance was large enough to flip conclusions — several single-seed effects were luck of initialisation. Replication is embarrassingly parallel and always has been.</p></div>
+    </div>
     <p class="reveal" style="color:var(--ink-faint);margin-top:18px;font-size:.9rem">Plus two secondary controls (in-sample vs held-out splits; testing effects not quantities). Full protocol, procedures and rejection thresholds in the paper — figures below are from it.</p>
   </div>
 </section>

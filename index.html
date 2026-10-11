@@ -100,15 +100,45 @@
       <h2>Infrastructure instincts, research discipline</h2>
     </div>
     <div class="grid g3">
-      <div class="feat reveal"><div class="ic">⛓️</div><h3>Agents that survive autonomy</h3><p>Layered permission gates, hard-deny policies and injection quarantines — long-running agents without catastrophic blast radius.</p></div>
-      <div class="feat reveal d1"><div class="ic">🧮</div><h3>Local-first AI stacks</h3><p>Quantized serving, embedding retrieval, crawl-budget intelligence. Capability without per-token rent.</p></div>
-      <div class="feat reveal d2"><div class="ic">🔬</div><h3>Claims before vibes</h3><p>Matched budgets, seed replication, oracle bounds. I publish the negative results too — that's where the signal lives.</p></div>
-      <div class="feat reveal"><div class="ic">🎮</div><h3>10 years of real-time DNA</h3><p>Games, VR/AR and Unity lead-engineering taught me frame budgets and feel. TUIs get the same treatment.</p></div>
-      <div class="feat reveal d1"><div class="ic">🛠️</div><h3>Ship it properly</h3><p>Installers, watchdogs, systemd units, docs. Software that runs at 3am without me touching it.</p></div>
-      <div class="feat reveal d2"><div class="ic">🧭</div><h3>Lead &amp; multiply</h3><p>Mentored engineers, set standards, ran agentic code-review infra at scale. Code is a team sport.</p></div>
+      <div class="feat reveal" data-detail="d-agents" data-kicker="// deep dive" data-title="Agents that survive autonomy"><div class="ic">⛓️</div><h3>Agents that survive autonomy</h3><p>Layered permission gates, hard-deny policies and injection quarantines — long-running agents without catastrophic blast radius.</p></div>
+      <div class="feat reveal d1" data-detail="d-local" data-kicker="// deep dive" data-title="Local-first AI stacks"><div class="ic">🧮</div><h3>Local-first AI stacks</h3><p>Quantized serving, embedding retrieval, crawl-budget intelligence. Capability without per-token rent.</p></div>
+      <div class="feat reveal d2" data-detail="d-claims" data-kicker="// deep dive" data-title="Claims before vibes"><div class="ic">🔬</div><h3>Claims before vibes</h3><p>Matched budgets, seed replication, oracle bounds. I publish the negative results too — that's where the signal lives.</p></div>
+      <div class="feat reveal" data-detail="d-rt" data-kicker="// deep dive" data-title="Real-time DNA"><div class="ic">🎮</div><h3>10 years of real-time DNA</h3><p>Games, VR/AR and Unity lead-engineering taught me frame budgets and feel. TUIs get the same treatment.</p></div>
+      <div class="feat reveal d1" data-detail="d-ship" data-kicker="// deep dive" data-title="Ship it properly"><div class="ic">🛠️</div><h3>Ship it properly</h3><p>Installers, watchdogs, systemd units, docs. Software that runs at 3am without me touching it.</p></div>
+      <div class="feat reveal d2" data-detail="d-lead" data-kicker="// deep dive" data-title="Lead &amp; multiply"><div class="ic">🧭</div><h3>Lead &amp; multiply</h3><p>Mentored engineers, set standards, ran agentic code-review infra at scale. Code is a team sport.</p></div>
     </div>
   </div>
 </section>
+
+<div hidden>
+  <div id="d-agents"><p>Giving an LLM shell access is easy. Keeping it safe across hour-long autonomous runs is the engineering:</p>
+    <ul><li><b>Hard-deny layer</b> — <code>rm -rf /</code>, raw device writes, fork bombs and fetch-piped-to-shell are never executed, even with approval or YOLO mode.</li>
+    <li><b>Persistent permission rules</b> — Allow once / Always / Never dialogs that survive restarts and can't resurrect a hard-deny.</li>
+    <li><b>Prompt-injection quarantine</b> — web pages are digested by a reader agent holding entirely inert tools; any tool call flags the URL and its content never reaches the main agent.</li></ul>
+    <p>All of this ships in Penguin Command.</p><a class="btn" href="projects/penguin-command.html">See the safety engine →</a></div>
+  <div id="d-local"><p>Two years of building the full local AI stack, top to bottom:</p>
+    <ul><li>Quantized model serving (Unsloth, Ollama, LM Studio, llama.cpp) with latency instrumentation.</li>
+    <li>Embedding search and vector retrieval over real corpora.</li>
+    <li>Crawl-budget intelligence — scoring URLs before fetching them so bandwidth goes where queries live.</li></ul>
+    <p>Spider Net is the flagship: a whole search engine that runs on one machine you own.</p><a class="btn" href="projects/spider-net.html">Explore Spider Net →</a></div>
+  <div id="d-claims"><p>Six architecture projects, each producing results that were plausible, internally consistent — and wrong. None caught by a reviewer or a loss curve.</p>
+    <ul><li>Every headline claim gets matched budgets, seed replication and an oracle bound before it's believed.</li>
+    <li>Two internal headline positives were retracted once the gates ran; both retractions became case studies.</li>
+    <li>The full protocol — eight enforceable gates with numeric rejection thresholds — is published on this site.</li></ul>
+    <a class="btn" href="research.html">Read the eight controls →</a></div>
+  <div id="d-rt"><p>A decade in games and VR before AI: Unity lead engineer taking medical VR to testing-ready, Unreal and C++ training delivery, SDK work on a global game platform.</p>
+    <ul><li>Frame budgets teach you that perceived responsiveness is the feature — my terminal UIs animate at 120Hz-friendly costs and degrade gracefully.</li>
+    <li>Every interactive element on this site has a no-motion fallback for exactly that reason (try the ✦ button).</li></ul></div>
+  <div id="d-ship"><p>The unglamorous 90% is where software either becomes a product or stays a demo:</p>
+    <ul><li>Cross-platform installers (sh + ps1) that bootstrap toolchains and wire shell integration.</li>
+    <li>systemd watchdogs with 30s health loops; Docker pipelines with one-command start/stop/logs.</li>
+    <li>Sessions checkpointed after every step so a crash costs at most one move.</li></ul>
+    <p>Penguin Command and Spider Net both install on a fresh machine in under two minutes.</p></div>
+  <div id="d-lead"><p>Senior roles across three industries taught the same lesson: systems fail where people hand off.</p>
+    <ul><li>Led agentic code-review infrastructure at Racing &amp; Sports — setup, integration and ongoing maintenance at org scale.</li>
+    <li>Set coding standards and ramped new staff as lead Unity developer; mentored engineers on architecture and debugging as a trainer.</li>
+    <li>Presented prototypes to clients and investors — technical work counts twice if nobody can understand it.</li></ul></div>
+</div>
 
 <section id="contact">
   <div class="wrap" style="text-align:center;padding-bottom:100px">
