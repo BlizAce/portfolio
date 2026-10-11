@@ -67,19 +67,19 @@
           <div class="chips"><span class="chip hot">Methodology</span><span class="chip">PyTorch</span></div>
           <span class="go">Read the protocol <span class="arr">→</span></span></div>
       </a>
-      <div class="card reveal" data-tags="research ai" style="opacity:1">
+      <div class="card reveal" data-tags="research ai" style="opacity:1" data-detail="p-matchcost" data-kicker="// research study" data-title="Matched-Cost Architecture Studies">
         <div class="thumb"><img src="../assets/img/figures/fig_02_c1_init_rms.png" alt="Residual RMS growth chart"></div>
         <div class="body"><h3>📐 Matched-Cost Architecture Studies</h3>
           <p>Fractal weight-tying vs dense transformers at matched inference cost — dominance curves, oracle bounds and a metastable forward map.</p>
           <div class="chips"><span class="chip">Training harness</span><span class="chip">Ablations</span></div></div>
       </div>
-      <div class="card reveal d1" data-tags="python ai" style="opacity:1">
+      <div class="card reveal d1" data-tags="python ai" style="opacity:1" data-detail="p-hmoe" data-kicker="// research study" data-title="HMoE Funnel Routing">
         <div class="thumb"><img src="../assets/img/figures/fig_routing_load.png" alt="Routing load chart"></div>
         <div class="body"><h3>🧮 HMoE Funnel Routing</h3>
           <p>Mixture-of-experts funnel routing with plateau-matched generalisation checks and routed-fraction thresholds — where the compute actually is.</p>
           <div class="chips"><span class="chip">MoE</span><span class="chip">Analysis</span></div></div>
       </div>
-      <div class="card reveal d2" data-tags="web rust" style="opacity:1">
+      <div class="card reveal d2" data-tags="web rust" style="opacity:1" data-detail="p-plumbing" data-kicker="// infrastructure" data-title="The unglamorous 90%">
         <div class="thumb"><img src="../assets/img/card-penguin.png" alt=""></div>
         <div class="body"><h3>🧰 The unglamorous 90%</h3>
           <p>Cross-platform installers, systemd watchdogs, Docker pipelines, shell integration for bash/zsh/fish/PowerShell — the plumbing that makes demos into products.</p>
@@ -88,6 +88,25 @@
     </div>
   </div>
 </section>
+
+<div hidden>
+  <div id="p-matchcost"><p>A full experimental harness for architecture claims at ≤10M parameters: training pipelines, benchmark scripts, an ablation framework and provenance audits.</p>
+    <ul><li>Dense dominates the fractal frontier at every matched cost point — 5 of 5 configurations.</li>
+    <li>Weight tying cuts parameters 87% while leaving MACs/item <em>exactly</em> unchanged: parameter sharing is not compute sharing.</li>
+    <li>An oracle bound showed adaptive depth had +0.00 points of headroom — the direction was provably dead before more GPUs were spent on it.</li></ul>
+    <p style="margin-top:14px"><a class="btn" href="../research.html">Read the protocol →</a> <a class="btn" href="../assets/papers/chapman-2025-matched-cost-routing.pdf" download>⬇ Paper 1 PDF</a></p></div>
+  <div id="p-hmoe"><p>The funnel-routing report: a mixture-of-experts architecture evaluated with the controls that later became the eight-gate protocol.</p>
+    <ul><li>Plateau-matched generalisation flipped one comparison's sign — the "loser" was merely slower to converge.</li>
+    <li>Routed-fraction thresholds exposed improvements riding on too few items to matter at scale.</li>
+    <li>Routing load distributions measured, not assumed — hot slots, cold retirement and cohesion tracked per run.</li></ul>
+    <p style="margin-top:14px"><a class="btn" href="../research.html">The eight controls →</a> <a class="btn" href="../assets/papers/chapman-2025-hmoe-funnel-report.pdf" download>⬇ Report PDF</a></p></div>
+  <div id="p-plumbing"><p>The layer nobody screenshots and everyone depends on:</p>
+    <ul><li><b>Installers</b> — install.sh / install.ps1 bootstrap Rust if needed, honour PC_INSTALL_DIR, wire shell integration for bash/zsh/fish/PowerShell; uninstall with --purge.</li>
+    <li><b>Watchdogs</b> — user-level systemd services with 30s health loops keep Spider Net alive across boots and crashes.</li>
+    <li><b>Docker pipelines</b> — one command builds, starts, health-checks, logs and shells in.</li>
+    <li><b>Checkpointed state</b> — sessions save after every step; atomic guarantees keep crawler state and index from diverging under failure.</li></ul>
+    <p>Penguin Command and Spider Net both install on a fresh machine in under two minutes.</p></div>
+</div>
 
 <footer class="site-foot">
   <div class="wrap foot-grid">

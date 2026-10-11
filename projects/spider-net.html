@@ -72,21 +72,54 @@
     <table class="tbl reveal">
       <thead><tr><th>Port</th><th>Service</th><th>What it does</th></tr></thead>
       <tbody>
-        <tr><td>9400</td><td>Search API</td><td>Keyword hash → block mapping → tree junction check → lazy load → filter → optional LLM re-rank → top N.</td></tr>
-        <tr><td>9401</td><td>Frontend</td><td>Minimalist Google-style search UI with auto-suggestions.</td></tr>
-        <tr><td>9402</td><td>Crawler API</td><td>Start/stop/status/flush for the bounded spider; document inspection.</td></tr>
-        <tr><td>9403</td><td>Dashboard</td><td>Real-time stats, crawl controls, system health.</td></tr>
-        <tr><td>9404</td><td>Reranker API</td><td>Local 3B LLM (llama.cpp) semantic re-ranking of top candidates.</td></tr>
-        <tr><td>—</td><td>Spider Chat</td><td>LLM chat over the index + scraped corpus (RAG), multi-conversation.</td></tr>
+        <tr data-detail="sn-search" data-kicker="// service · port 9400" data-title="Search API"><td>9400</td><td>Search API</td><td>Keyword hash → block mapping → tree junction check → lazy load → filter → optional LLM re-rank → top N.</td></tr>
+        <tr data-detail="sn-front" data-kicker="// service · port 9401" data-title="Frontend"><td>9401</td><td>Frontend</td><td>Minimalist Google-style search UI with auto-suggestions.</td></tr>
+        <tr data-detail="sn-crawl" data-kicker="// service · port 9402" data-title="Crawler API"><td>9402</td><td>Crawler API</td><td>Start/stop/status/flush for the bounded spider; document inspection.</td></tr>
+        <tr data-detail="sn-dash" data-kicker="// service · port 9403" data-title="Dashboard"><td>9403</td><td>Dashboard</td><td>Real-time stats, crawl controls, system health.</td></tr>
+        <tr data-detail="sn-rerank" data-kicker="// service · port 9404" data-title="Reranker API"><td>9404</td><td>Reranker API</td><td>Local 3B LLM (llama.cpp) semantic re-ranking of top candidates.</td></tr>
+        <tr data-detail="sn-chat" data-kicker="// service" data-title="Spider Chat"><td>—</td><td>Spider Chat</td><td>LLM chat over the index + scraped corpus (RAG), multi-conversation.</td></tr>
       </tbody>
     </table>
+    <div hidden>
+      <div id="sn-search"><p>The query path, in order: keyword hash lookup locates candidate blocks, tree junctions prune the space hierarchically, only surviving blocks decompress into RAM, candidates get scored — and optionally handed to the reranker.</p>
+        <ul><li><code>GET /search?q=…</code> · <code>POST /search {"q":"…","top_n":10}</code></li>
+        <li><code>GET /suggest?q=…</code> for type-ahead, <code>/stats</code> and <code>/health</code> for ops.</li>
+        <li>Atomic memory guarantees: index and crawler state never diverge under failure.</li></ul></div>
+      <div id="sn-front"><p>A deliberately plain search UI — zero frameworks, instant load, keyboard-first. Auto-suggestions come straight from the keyword hash, not a server round-trip to some other company.</p>
+        <p>The live instance runs on the home LAN; this portfolio is its only public window.</p></div>
+      <div id="sn-crawl"><p>Drive the bounded spider programmatically:</p>
+        <ul><li><code>POST /crawl/start {"seed_urls":[…]}</code> — N-degree crawl with semantic link filtering, sitemap/RSS discovery and robots.txt compliance.</li>
+        <li><code>/crawl/status</code>, <code>POST /crawl/stop</code>, <code>POST /crawl/flush</code> for graceful shutdowns, <code>/crawl/docs</code> to inspect what landed.</li>
+        <li>The scheduler prioritises URLs by past query signals and page scores — crawl budget follows interest, not link order.</li></ul></div>
+      <div id="sn-dash"><p>Real-time view of everything: index size, block counts, crawl progress, queue depth, system health. Built for the wall-mounted terminal scenario — glanceable at a metre's distance.</p></div>
+      <div id="sn-rerank"><p><code>POST /rerank</code> takes the lexical top candidates and re-scores them semantically with a local 3B model under llama.cpp (<code>/status</code>, <code>/health</code> for ops).</p>
+        <ul><li>Reranking happens on a narrowed candidate set — GPU seconds are spent only where they change rankings.</li>
+        <li>Fully optional: disable it in config and the engine degrades gracefully to pure lexical search.</li></ul></div>
+      <div id="sn-chat"><p>A chat interface over the whole system: answers grounded in Spider Net's own index plus the scraped corpus, with multi-conversation support. RAG done locally — the retrieval, the generation and the conversation history all stay on the machine you point at.</p></div>
+    </div>
     <div class="grid g3" style="margin-top:36px">
-      <div class="feat reveal"><div class="ic">🚀</div><h3>One-click ops</h3><p><code>./scripts/start.sh start</code> builds and health-checks the container; a systemd watchdog keeps it alive across boots and reboots.</p></div>
-      <div class="feat reveal d1"><div class="ic">🧠</div><h3>Semantic where it counts</h3><p>Embedding-based relevance scoring on candidates the lexical index already narrowed — precision without paying GPU prices at query time.</p></div>
-      <div class="feat reveal d2"><div class="ic">🔒</div><h3>Yours, entirely</h3><p>No cloud dependency, no query logging by strangers. The whole stack runs on a machine you can point at.</p></div>
+      <div class="feat reveal" data-detail="sn-ops" data-kicker="// operations" data-title="One-click ops"><div class="ic">🚀</div><h3>One-click ops</h3><p><code>./scripts/start.sh start</code> builds and health-checks the container; a systemd watchdog keeps it alive across boots and reboots.</p></div>
+      <div class="feat reveal d1" data-detail="sn-sem" data-kicker="// retrieval" data-title="Semantic where it counts"><div class="ic">🧠</div><h3>Semantic where it counts</h3><p>Embedding-based relevance scoring on candidates the lexical index already narrowed — precision without paying GPU prices at query time.</p></div>
+      <div class="feat reveal d2" data-detail="sn-yours" data-kicker="// philosophy" data-title="Yours, entirely"><div class="ic">🔒</div><h3>Yours, entirely</h3><p>No cloud dependency, no query logging by strangers. The whole stack runs on a machine you can point at.</p></div>
     </div>
   </div>
 </section>
+
+<div hidden>
+  <div id="sn-ops"><p>Every operation is one command with a sane default:</p>
+    <ul><li><code>start / stop / restart / logs / shell / status</code> — build, run, debug and inspect without opening the compose file.</li>
+    <li><code>start_auto.sh install</code> registers a user-level systemd service that auto-starts on boot and health-checks every 30 seconds.</li>
+    <li>All persistent data lives in one mounted directory: blocks, index, models, logs, document cache.</li></ul>
+    <p>The design goal: a machine you forget about until you want to search something.</p></div>
+  <div id="sn-sem"><p>Two-stage retrieval done economically:</p>
+    <ul><li>Stage one is lexical and nearly free — keyword hash plus hierarchical tree junctions prune millions of candidates down to dozens.</li>
+    <li>Stage two spends model compute only on that handful: embedding relevance scoring, then optional 3B-LLM re-ranking for ordering nuance.</li>
+    <li>Query latency stays in the tens of milliseconds; reranking is a config flag away from being swapped for any local GGUF model.</li></ul></div>
+  <div id="sn-yours"><p>The philosophical core of the project: routing beats hoarding, and owning beats renting.</p>
+    <ul><li>No third party sees your queries — there is no third party.</li>
+    <li>The index stores pointers and scores, not paragraphs, so it stays small enough to own outright.</li>
+    <li>Built for the scenario where internet access is intermittent, expensive, or simply not something you trust with your search history.</li></ul></div>
+</div>
 
 <footer class="site-foot">
   <div class="wrap foot-grid">

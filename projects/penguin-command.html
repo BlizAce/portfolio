@@ -121,12 +121,31 @@ your terminal
    │    inert dummy tools only — any tool call ⇒ URL flagged, content withheld
    └─ <span class="k">safety gate</span> ── hard-deny regexes → persisted rules → workspace/path analysis</div>
     <div class="grid g3" style="margin-top:34px">
-      <div class="feat reveal"><div class="ic">🧪</div><h3>Tested where it counts</h3><p>VT emulator, safety policy, sudo-prompt handling, retry/abort logic, reasoning-budget recovery and SSRF guards all covered by unit tests.</p></div>
-      <div class="feat reveal d1"><div class="ic">📦</div><h3>One-command install</h3><p>install.sh / install.ps1 bootstrap Rust if needed, drop a single binary on PATH, wire shell integration for bash/zsh/fish/PowerShell.</p></div>
-      <div class="feat reveal d2"><div class="ic">🔌</div><h3>Provider-agnostic</h3><p>Ollama, LM Studio, OpenRouter, llama.cpp, vLLM, OpenAI, Anthropic — any OpenAI-compatible endpoint with latency ping and ctx-window tracking.</p></div>
+      <div class="feat reveal" data-detail="pc-tests" data-kicker="// quality" data-title="Tested where it counts"><div class="ic">🧪</div><h3>Tested where it counts</h3><p>VT emulator, safety policy, sudo-prompt handling, retry/abort logic, reasoning-budget recovery and SSRF guards all covered by unit tests.</p></div>
+      <div class="feat reveal d1" data-detail="pc-install" data-kicker="// distribution" data-title="One-command install"><div class="ic">📦</div><h3>One-command install</h3><p>install.sh / install.ps1 bootstrap Rust if needed, drop a single binary on PATH, wire shell integration for bash/zsh/fish/PowerShell.</p></div>
+      <div class="feat reveal d2" data-detail="pc-providers" data-kicker="// connectivity" data-title="Provider-agnostic"><div class="ic">🔌</div><h3>Provider-agnostic</h3><p>Ollama, LM Studio, OpenRouter, llama.cpp, vLLM, OpenAI, Anthropic — any OpenAI-compatible endpoint with latency ping and ctx-window tracking.</p></div>
     </div>
   </div>
 </section>
+
+<div hidden>
+  <div id="pc-tests"><p>The test suite targets exactly the places where a wrong answer costs a user their machine or their patience:</p>
+    <ul><li><b>VT emulator</b> — escape sequences, alt-screen apps, scrollback edge cases.</li>
+    <li><b>Safety policy engine</b> — hard-deny regexes can't be resurrected by stale "always allow" rules; blocklisted hosts are refused on every redirect hop.</li>
+    <li><b>Sudo-prompt handling</b> — the hidden password modal never echoes, children detached with setsid.</li>
+    <li><b>Retry/abort logic</b> — Esc lands in under a second even mid-socket, mid-retry-wait or mid-compaction; retries only happen before any output streams, so side effects never duplicate.</li>
+    <li><b>Web pipeline</b> — DuckDuckGo parsing and SSRF guards covered by unit tests plus live integration tests against the real endpoints.</li></ul></div>
+  <div id="pc-install"><p>One command from clone to running agent:</p>
+    <ul><li><code>./install.sh</code> on Linux/macOS, <code>powershell -File install.ps1</code> on Windows — both bootstrap Rust via rustup if it's missing (<code>--no-rustup</code> fails loudly instead).</li>
+    <li>Single binary named <code>pc</code>; installs to <code>~/.local/bin</code>, honours <code>PC_INSTALL_DIR</code>, defaults to <code>/usr/local/bin</code> when run as root.</li>
+    <li>Shell integration wired for bash, zsh, fish and PowerShell so the agent knows your live working directory (OSC 7).</li>
+    <li><code>./uninstall.sh</code> removes the binary and keeps config; <code>--purge</code> takes everything.</li></ul></div>
+  <div id="pc-providers"><p>The provider wizard (<code>pc setup</code>) handles the whole connection story without editing TOML:</p>
+    <ul><li>Add OpenAI-compatible endpoints (Ollama, LM Studio, OpenRouter, llama.cpp, vLLM, anything) or Anthropic.</li>
+    <li>Press Enter on the base_url field to test and fetch the model list; press <code>t</code> to ping for latency — time-to-first-token is measured, so a 90-second model load reads as alive rather than hung.</li>
+    <li>Context window per provider drives the usage meter and auto-compaction thresholds.</li>
+    <li>Keys accept literal or <code>$ENV_VAR</code>; config file written chmod 600. Hand-editing config.toml still works fine.</li></ul></div>
+</div>
 
 <footer class="site-foot">
   <div class="wrap foot-grid">
