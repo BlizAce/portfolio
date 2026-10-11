@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shane Chapman — AI Systems Engineer</title>
+<meta name="description" content="Systems engineer at the intersection of infrastructure and applied AI. Terminal agents in Rust, locally hosted search, transformer architecture research.">
+<meta property="og:title" content="Shane Chapman — AI Systems Engineer">
+<meta property="og:description" content="Agentic tooling · local LLM infrastructure · applied ML research. 10+ years across games, VR/AR, full-stack and ML.">
+<meta property="og:image" content="assets/img/og-image.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32">
+<link rel="apple-touch-icon" href="assets/img/favicon-180.png">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<header class="site-head">
+  <nav class="wrap nav" aria-label="Main">
+    <a class="brand" href="index.html"><img src="assets/img/logo-master.png" alt="Logo — neuron web"><span>Shane Chapman<small>AI Systems Engineer</small></span></a>
+    <button class="icon-btn burger" id="burger" aria-label="Menu">☰</button>
+    <div class="nav-links" id="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="projects/index.html">Projects</a>
+      <a href="research.html">Research</a>
+      <a href="experience.html">Experience</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-ctrls">
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle light/dark theme"><span class="tip">Switch mode</span></button>
+      <button class="icon-btn on" id="motion-toggle" aria-label="Toggle animations" aria-pressed="true">✦<span class="tip">Animations ON — click to disable</span></button>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <canvas id="neural-canvas" aria-hidden="true"></canvas>
+  <div class="hero-fallback" aria-hidden="true"></div>
+  <div class="wrap hero-inner">
+    <span class="kicker"><i class="dot"></i> open to AI infrastructure &amp; agent tooling roles</span>
+    <h1 class="hero-title">I build the systems<br><span class="grad-text">underneath intelligent software.</span></h1>
+    <p class="hero-sub">Senior engineer, 10+ years across games, VR/AR and full-stack — now shipping agentic tooling in Rust, locally hosted AI infrastructure, and honest applied ML research.</p>
+    <p class="typed-wrap">&gt; <span id="typed" data-words='["terminal agents that stay safe autonomously","search engines with crawl-budget intelligence","transformer claims that survive 8 evaluation gates","LLM stacks that run on your own metal"]'></span><i class="cursor-blink">&nbsp;</i></p>
+    <div class="hero-ctas">
+      <a class="btn primary" href="projects/index.html">Explore projects →</a>
+      <a class="btn" href="https://www.linkedin.com/in/shane-chapman-ai" target="_blank" rel="noopener">LinkedIn ↗</a>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><b>10+</b><span>years shipping software</span></div>
+      <div class="stat"><b>Rust</b><span>terminal agent, custom VTE</span></div>
+      <div class="stat"><b>6</b><span>research projects · 8 controls</span></div>
+      <div class="stat"><b>Local-first</b><span>LLM inference &amp; retrieval</span></div>
+    </div>
+  </div>
+  <div class="scroll-hint" aria-hidden="true">⌄</div>
+</section>
+
+<section id="featured">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">// selected work</span>
+      <h2>Three systems worth a deep look</h2>
+      <p>Flagships from two years of independent R&amp;D — each one designed, built and operated end-to-end.</p>
+    </div>
+    <div class="grid g3">
+      <a class="card reveal" href="projects/penguin-command.html" data-tilt style="color:inherit;text-decoration:none">
+        <div class="thumb"><img src="assets/img/card-penguin.png" alt="Penguin Command artwork"></div>
+        <div class="body">
+          <h3>🐧 Penguin Command</h3>
+          <p>A terminal-native AI agent in Rust: custom VT emulator, layered safety engine, goal autonomy and a sandboxed web reader — inside any terminal.</p>
+          <div class="chips"><span class="chip hot">Rust</span><span class="chip">TUI</span><span class="chip">LLM agents</span><span class="chip">Safety</span></div>
+          <span class="go">See it work <span class="arr">→</span></span>
+        </div>
+      </a>
+      <a class="card reveal d1" href="projects/spider-net.html" data-tilt style="color:inherit;text-decoration:none">
+        <div class="thumb"><img src="assets/img/card-spider.png" alt="Spider Net artwork"></div>
+        <div class="body">
+          <h3>🕸 Spider Net</h3>
+          <p>A locally hosted search engine: interest-scored crawl scheduling, block-compressed inverted index, hierarchical routing and local LLM re-ranking.</p>
+          <div class="chips"><span class="chip hot">Python</span><span class="chip">Search</span><span class="chip">RAG</span><span class="chip">Docker</span></div>
+          <span class="go">See it work <span class="arr">→</span></span>
+        </div>
+      </a>
+      <a class="card reveal d2" href="research.html" data-tilt style="color:inherit;text-decoration:none">
+        <div class="thumb"><img src="assets/img/card-research.png" alt="Research artwork"></div>
+        <div class="body">
+          <h3>🧪 Evaluation Protocol Research</h3>
+          <p>Eight hard gates that caught our own wrong results — a reusable protocol from six small-scale architecture projects, negative results included.</p>
+          <div class="chips"><span class="chip hot">PyTorch</span><span class="chip">Methodology</span><span class="chip">Transformers</span></div>
+          <span class="go">Read the protocol <span class="arr">→</span></span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="craft" style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">// how I work</span>
+      <h2>Infrastructure instincts, research discipline</h2>
+    </div>
+    <div class="grid g3">
+      <div class="feat reveal"><div class="ic">⛓️</div><h3>Agents that survive autonomy</h3><p>Layered permission gates, hard-deny policies and injection quarantines — long-running agents without catastrophic blast radius.</p></div>
+      <div class="feat reveal d1"><div class="ic">🧮</div><h3>Local-first AI stacks</h3><p>Quantized serving, embedding retrieval, crawl-budget intelligence. Capability without per-token rent.</p></div>
+      <div class="feat reveal d2"><div class="ic">🔬</div><h3>Claims before vibes</h3><p>Matched budgets, seed replication, oracle bounds. I publish the negative results too — that's where the signal lives.</p></div>
+      <div class="feat reveal"><div class="ic">🎮</div><h3>10 years of real-time DNA</h3><p>Games, VR/AR and Unity lead-engineering taught me frame budgets and feel. TUIs get the same treatment.</p></div>
+      <div class="feat reveal d1"><div class="ic">🛠️</div><h3>Ship it properly</h3><p>Installers, watchdogs, systemd units, docs. Software that runs at 3am without me touching it.</p></div>
+      <div class="feat reveal d2"><div class="ic">🧭</div><h3>Lead &amp; multiply</h3><p>Mentored engineers, set standards, ran agentic code-review infra at scale. Code is a team sport.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap" style="text-align:center;padding-bottom:100px">
+    <div class="sec-head reveal" style="margin-bottom:26px">
+      <span class="eyebrow">// contact</span>
+      <h2>Let's build something reliable</h2>
+      <p style="margin-left:auto;margin-right:auto">Roles in AI infrastructure, agent tooling or applied ML engineering — and interesting conversations about any of it.</p>
+    </div>
+    <a class="btn primary reveal d1" href="https://www.linkedin.com/in/shane-chapman-ai" target="_blank" rel="noopener">Connect on LinkedIn ↗</a>
+  </div>
+</section>
+
+<footer class="site-foot">
+  <div class="wrap foot-grid">
+    <a class="brand" href="index.html"><img src="assets/img/logo-master.png" alt="" width="30" height="30"><span>Shane Chapman</span></a>
+    <span class="mono">© <span data-year></span> Shane Chapman · built as a static site, no trackers, all pixels earned</span>
+  </div>
+</footer>
+
+<script src="assets/js/neural.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

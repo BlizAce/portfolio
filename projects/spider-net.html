@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spider Net — Shane Chapman</title>
+<meta name="description" content="Locally hosted web routing engine: interest-scored crawling, block-compressed inverted index, hierarchical semantic routing, local LLM re-ranking.">
+<link rel="icon" href="../assets/img/favicon-32.png" sizes="32">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<header class="site-head">
+  <nav class="wrap nav" aria-label="Main">
+    <a class="brand" href="../index.html"><img src="../assets/img/logo-master.png" alt="Logo — neuron web"><span>Shane Chapman<small>AI Systems Engineer</small></span></a>
+    <button class="icon-btn burger" id="burger" aria-label="Menu">☰</button>
+    <div class="nav-links" id="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html" class="active">Projects</a>
+      <a href="../research.html">Research</a>
+      <a href="../experience.html">Experience</a>
+      <a href="../index.html#contact">Contact</a>
+    </div>
+    <div class="nav-ctrls">
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle light/dark theme"><span class="tip">Switch mode</span></button>
+      <button class="icon-btn on" id="motion-toggle" aria-label="Toggle animations" aria-pressed="true">✦<span class="tip">Animations ON — click to disable</span></button>
+    </div>
+  </nav>
+</header>
+
+<div class="wrap page-hero">
+  <p class="breadcrumbs"><a href="../index.html">home</a> / <a href="index.html">projects</a> / spider-net</p>
+  <span class="eyebrow">// locally hosted search · python · live on the LAN</span>
+  <h1>🕸 Spider Net</h1>
+  <p>A web routing engine that directs you to relevant sites <em>without hoarding the full text of the internet</em>. Brutalist efficiency: block-compressed inverted index, hierarchical semantic routing, local LLM re-ranking.</p>
+  <div class="chips" style="margin-top:18px">
+    <span class="chip hot">Python</span><span class="chip">Flask API</span><span class="chip">Docker</span><span class="chip">llama.cpp</span><span class="chip">zstd blocks</span>
+  </div>
+</div>
+
+<section style="padding-top:10px">
+  <div class="wrap">
+    <figure class="giffig reveal">
+      <div class="bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#2ef773"></i><span>query → hash → tree junctions → lazy load → LLM re-rank → results</span></div>
+      <img src="../assets/gifs/spider-flow.gif" data-gifsrc="../assets/gifs/spider-flow.gif" data-poster="../assets/gifs/spider-flow-poster.png" alt="Spider Net pipeline animation: a query travels through keyword hash, block map, tree junctions, lazy load, filtering and LLM re-ranking to scored results">
+    </figure>
+  </div>
+</section>
+
+<section style="padding-top:30px">
+  <div class="wrap two-col">
+    <div class="reveal">
+      <h2 style="margin-bottom:14px">Crawl like it costs something</h2>
+      <p style="color:var(--ink-dim)">Naive breadth-first crawling burns bandwidth on noise. Spider Net scores before it fetches:</p>
+      <ul style="color:var(--ink-dim);margin:16px 0 0 20px;display:flex;flex-direction:column;gap:10px">
+        <li><b>Interest-scored scheduler</b> — URLs prioritised by past query signals and page scores, not link order.</li>
+        <li><b>Bounded N-degree spider</b> with semantic link filtering, sitemap/RSS discovery and robots.txt compliance.</li>
+        <li><b>Proxy rotation</b> for large-scale scraping without burning the home IP.</li>
+        <li><b>Atomic memory guarantees</b> — crawler state and search index never diverge under failure.</li>
+      </ul>
+    </div>
+    <div class="reveal d1">
+      <h2 style="margin-bottom:14px">Store like it costs something</h2>
+      <p style="color:var(--ink-dim)">The index keeps pointers, not paragraphs. Data blocks are compressed (<code>.tar.zst</code>) and <b>lazy-loaded into RAM only when a query touches them</b>; hierarchical tree junctions prune the candidate space before anything decompresses.</p>
+      <div class="callout" style="margin-top:18px"><b>Design rule:</b> a search engine that needs the whole internet's text has already lost. Route, score, re-rank — fetch only what the user opens.</div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="eyebrow">// subsystems</span><h2>Six services, one container</h2></div>
+    <table class="tbl reveal">
+      <thead><tr><th>Port</th><th>Service</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>9400</td><td>Search API</td><td>Keyword hash → block mapping → tree junction check → lazy load → filter → optional LLM re-rank → top N.</td></tr>
+        <tr><td>9401</td><td>Frontend</td><td>Minimalist Google-style search UI with auto-suggestions.</td></tr>
+        <tr><td>9402</td><td>Crawler API</td><td>Start/stop/status/flush for the bounded spider; document inspection.</td></tr>
+        <tr><td>9403</td><td>Dashboard</td><td>Real-time stats, crawl controls, system health.</td></tr>
+        <tr><td>9404</td><td>Reranker API</td><td>Local 3B LLM (llama.cpp) semantic re-ranking of top candidates.</td></tr>
+        <tr><td>—</td><td>Spider Chat</td><td>LLM chat over the index + scraped corpus (RAG), multi-conversation.</td></tr>
+      </tbody>
+    </table>
+    <div class="grid g3" style="margin-top:36px">
+      <div class="feat reveal"><div class="ic">🚀</div><h3>One-click ops</h3><p><code>./scripts/start.sh start</code> builds and health-checks the container; a systemd watchdog keeps it alive across boots and reboots.</p></div>
+      <div class="feat reveal d1"><div class="ic">🧠</div><h3>Semantic where it counts</h3><p>Embedding-based relevance scoring on candidates the lexical index already narrowed — precision without paying GPU prices at query time.</p></div>
+      <div class="feat reveal d2"><div class="ic">🔒</div><h3>Yours, entirely</h3><p>No cloud dependency, no query logging by strangers. The whole stack runs on a machine you can point at.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-foot">
+  <div class="wrap foot-grid">
+    <a class="brand" href="../index.html"><img src="../assets/img/logo-master.png" alt="" width="30" height="30"><span>Shane Chapman</span></a>
+    <span class="mono">Live demo runs on the home LAN · source on personal GitLab · MIT</span>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

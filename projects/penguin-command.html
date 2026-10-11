@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Penguin Command — Shane Chapman</title>
+<meta name="description" content="A terminal-native AI agent in Rust: custom VTE emulator, layered safety engine, goal autonomy, sandboxed web research.">
+<meta property="og:image" content="../assets/img/og-image.png">
+<link rel="icon" href="../assets/img/favicon-32.png" sizes="32">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<header class="site-head">
+  <nav class="wrap nav" aria-label="Main">
+    <a class="brand" href="../index.html"><img src="../assets/img/logo-master.png" alt="Logo — neuron web"><span>Shane Chapman<small>AI Systems Engineer</small></span></a>
+    <button class="icon-btn burger" id="burger" aria-label="Menu">☰</button>
+    <div class="nav-links" id="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html" class="active">Projects</a>
+      <a href="../research.html">Research</a>
+      <a href="../experience.html">Experience</a>
+      <a href="../index.html#contact">Contact</a>
+    </div>
+    <div class="nav-ctrls">
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle light/dark theme"><span class="tip">Switch mode</span></button>
+      <button class="icon-btn on" id="motion-toggle" aria-label="Toggle animations" aria-pressed="true">✦<span class="tip">Animations ON — click to disable</span></button>
+    </div>
+  </nav>
+</header>
+
+<div class="wrap page-hero">
+  <p class="breadcrumbs"><a href="../index.html">home</a> / <a href="index.html">projects</a> / penguin-command</p>
+  <span class="eyebrow">// flagship · rust · 2025–2026</span>
+  <h1>🐧 Penguin Command</h1>
+  <p>A terminal that runs inside <em>any</em> terminal — with an AI system assistant one keystroke away. Real PTY, real shell, custom VT emulator, and a safety engine built for autonomous runs.</p>
+  <div class="chips" style="margin-top:18px">
+    <span class="chip hot">Rust</span><span class="chip">Custom VTE</span><span class="chip">OpenAI-compatible + Anthropic</span><span class="chip">Linux · macOS · Windows</span><span class="chip">MIT</span>
+  </div>
+</div>
+
+<section style="padding-top:10px">
+  <div class="wrap">
+    <figure class="giffig reveal">
+      <div class="bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#2ef773"></i><span>pc — one keystroke between your shell and the agent</span></div>
+      <img src="../assets/gifs/penguin-toggle.gif" data-gifsrc="../assets/gifs/penguin-toggle.gif" data-poster="../assets/gifs/penguin-toggle-poster.png" alt="Penguin Command: typing df -h in the shell, pressing Ctrl+Space, agent mode answers with a live reasoning panel and a du tool call">
+    </figure>
+    <p class="reveal" style="color:var(--ink-dim);margin-top:16px;max-width:720px"><b style="color:var(--ink)">Drop-in, not a replacement.</b> Your shell keeps running underneath. <span class="kbd">Ctrl+Space</span> slides into agent mode; toggle off and your terminal is exactly where you left it — scrollback, running programs and all.</p>
+  </div>
+</section>
+
+<section style="padding-top:20px">
+  <div class="wrap two-col">
+    <figure class="giffig reveal" data-tilt>
+      <div class="bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#2ef773"></i><span>/goal — plan → execute → verify, with live sidebar</span></div>
+      <img src="../assets/gifs/penguin-goal.gif" data-gifsrc="../assets/gifs/penguin-goal.gif" data-poster="../assets/gifs/penguin-goal-poster.png" alt="Penguin Command goal mode: a /goal command spawns a plan whose steps tick from pending to running to done, ending in a verified banner">
+    </figure>
+    <div class="reveal d1">
+      <h2 style="margin-bottom:14px">Goals, not prompts</h2>
+      <p style="color:var(--ink-dim)"><code>/goal &lt;thing&gt;</code> hands the agent autonomy: it plans minor goals, executes with real tools, and must <b style="color:var(--green)">prove success with a check</b> before the ★ VERIFIED banner lands.</p>
+      <ul style="color:var(--ink-dim);margin:16px 0 0 20px;display:flex;flex-direction:column;gap:10px">
+        <li><b>Auto-continuation</b> — if the model stops before verifying, penguin picks it back up, plan intact.</li>
+        <li><b>Mid-run steering</b> — anything you type is injected at the agent's next step; no abort needed.</li>
+        <li><b>The agent asks you back</b> — <code>ask_user()</code> pops selectable options when it needs a decision.</li>
+        <li><b>Sessions checkpoint every step</b> — a crash loses at most one move; <code>/resume</code> restores the sidebar exactly.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:20px">
+  <div class="wrap two-col" style="direction:rtl"><div style="direction:ltr">
+    <div class="reveal">
+      <h2 style="margin-bottom:14px">Safety is the product</h2>
+      <p style="color:var(--ink-dim)">Autonomy without blast-radius control is a liability. Three layers stand between the model and your machine:</p>
+      <ul style="color:var(--ink-dim);margin:16px 0 0 20px;display:flex;flex-direction:column;gap:10px">
+        <li><b style="color:var(--red)">Hard deny</b> — <code>rm -rf /</code>, raw disk writes, fork bombs, <code>curl | sh</code>. Never executed. Not even in YOLO mode.</li>
+        <li><b style="color:var(--yellow)">Permission gates</b> — anything outside the workspace pops Allow once / Always / Never; rules persist.</li>
+        <li><b style="color:var(--cyan)">Injection quarantine</b> — web pages are digested by a reader agent holding entirely inert tools. Any tool call flips the URL dirty and its content never reaches the main agent.</li>
+      </ul>
+    </div>
+  </div><figure class="giffig reveal d1" style="direction:ltr" data-tilt>
+      <div class="bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#2ef773"></i><span>safety engine — permission gate + catastrophic hard-deny</span></div>
+      <img src="../assets/gifs/penguin-safety.gif" data-gifsrc="../assets/gifs/penguin-safety.gif" data-poster="../assets/gifs/penguin-safety-poster.png" alt="Penguin Command safety: a permission dialog offers Allow once / Always / Never, then a curl-piped-to-shell command is hard-denied in red">
+    </figure>
+  </div>
+</section>
+
+<section style="padding-top:20px">
+  <div class="wrap two-col">
+    <figure class="giffig reveal" data-tilt>
+      <div class="bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#2ef773"></i><span>/screensaver — because serious tools can have a soul</span></div>
+      <img src="../assets/gifs/penguin-saver.gif" data-gifsrc="../assets/gifs/penguin-saver.gif" data-poster="../assets/gifs/penguin-saver-poster.png" alt="Penguin Command idle screensaver: ASCII penguins waddle under a shimmering aurora through falling snow">
+    </figure>
+    <div class="reveal d1">
+      <h2 style="margin-bottom:14px">Built for slow thinking</h2>
+      <p style="color:var(--ink-dim)">Tuned for local reasoning models that spend minutes thinking before they speak:</p>
+      <ul style="color:var(--ink-dim);margin:16px 0 0 20px;display:flex;flex-direction:column;gap:10px">
+        <li>Chain-of-thought streams in its own live panel — the screen never looks frozen.</li>
+        <li>Elapsed timers, tok/s readouts and per-tool run timers on everything.</li>
+        <li>Thinking depth is a live dial: <code>/effort low·med·high·xhigh</code>.</li>
+        <li>Context meter with auto-compaction at 85% — and hard-compact recovery when a provider rejects the prompt.</li>
+      </ul>
+      <p style="color:var(--ink-faint);margin-top:18px;font-size:.88rem">…and yes, leave it idle and ASCII penguins take over. Waddling through a blizzard under an aurora. Any key wakes them.</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="eyebrow">// architecture</span><h2>How it fits together</h2></div>
+    <div class="codeblock reveal"><span class="cm"># every layer is mine — no wrapper libraries, no framework magic</span>
+your terminal
+└─ pc (TUI)
+   ├─ PTY ── your shell (bash/zsh/fish/pwsh + OSC7 integration)
+   │         rendered through a <span class="k">vte grid emulator</span>, scrollback included
+   ├─ agent thread ── provider chat w/ tool calling (async streaming SSE)
+   │    tools: run_command · read/write/edit_file · find_files · list_dir
+   │            set_permissions · update_plan · finish_goal · ask_user
+   │            save_skill · load_skill · web_search · web_read
+   ├─ <span class="s">reader sandbox</span> ── quarantined page digestion:
+   │    inert dummy tools only — any tool call ⇒ URL flagged, content withheld
+   └─ <span class="k">safety gate</span> ── hard-deny regexes → persisted rules → workspace/path analysis</div>
+    <div class="grid g3" style="margin-top:34px">
+      <div class="feat reveal"><div class="ic">🧪</div><h3>Tested where it counts</h3><p>VT emulator, safety policy, sudo-prompt handling, retry/abort logic, reasoning-budget recovery and SSRF guards all covered by unit tests.</p></div>
+      <div class="feat reveal d1"><div class="ic">📦</div><h3>One-command install</h3><p>install.sh / install.ps1 bootstrap Rust if needed, drop a single binary on PATH, wire shell integration for bash/zsh/fish/PowerShell.</p></div>
+      <div class="feat reveal d2"><div class="ic">🔌</div><h3>Provider-agnostic</h3><p>Ollama, LM Studio, OpenRouter, llama.cpp, vLLM, OpenAI, Anthropic — any OpenAI-compatible endpoint with latency ping and ctx-window tracking.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-foot">
+  <div class="wrap foot-grid">
+    <a class="brand" href="../index.html"><img src="../assets/img/logo-master.png" alt="" width="30" height="30"><span>Shane Chapman</span></a>
+    <span class="mono">Source: personal GitLab · <a href="https://github.com/BlizAce/Penguin-Command" target="_blank" rel="noopener">GitHub mirror ↗</a> · MIT</span>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
