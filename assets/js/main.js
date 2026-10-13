@@ -1,11 +1,8 @@
 /* Theme, motion control + FPS watchdog, reveals, tilt, lightbox, typing. */
 (function () {
   "use strict";
-  const root = document.documentElement;
   const body = document.body;
   const store = {
-    get theme() { return localStorage.getItem("sc-theme") || "dark"; },
-    set theme(v) { localStorage.setItem("sc-theme", v); },
     get motion() { return localStorage.getItem("sc-motion"); }, // null | "off" | "on"
     set motion(v) { localStorage.setItem("sc-motion", v); },
   };
@@ -27,18 +24,6 @@
     function dismiss() { t.style.opacity = 0; setTimeout(() => t.remove(), 400); }
     setTimeout(dismiss, ms);
   }
-
-  /* ---------- theme ---------- */
-  const themeBtn = document.getElementById("theme-toggle");
-  function applyTheme(v) {
-    root.setAttribute("data-theme", v);
-    if (themeBtn) { themeBtn.textContent = v === "dark" ? "☾" : "☀"; themeBtn.classList.toggle("on", v === "light"); }
-  }
-  applyTheme(store.theme);
-  themeBtn && themeBtn.addEventListener("click", () => {
-    store.theme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-    applyTheme(store.theme);
-  });
 
   /* ---------- motion control ---------- */
   const motionBtn = document.getElementById("motion-toggle");
