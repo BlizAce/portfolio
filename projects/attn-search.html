@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beyond Retrieval — attn-search · Shane Chapman</title>
+<meta name="description" content="Seven IR-imported attention mechanisms, none beating dense at matched compute — and verifier-guided decoding dominating attention choice by an order of magnitude. 17 experiments on a leak-free arithmetic corpus.">
+<link rel="icon" href="../assets/img/favicon-32.png" sizes="32">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<header class="site-head">
+  <nav class="wrap nav" aria-label="Main">
+    <a class="brand" href="../index.html"><img src="../assets/img/logo-master.png" alt="Logo — neuron web"><span>Shane Chapman<small>AI Systems Engineer</small></span></a>
+    <button class="icon-btn burger" id="burger" aria-label="Menu">☰</button>
+    <div class="nav-links" id="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html" class="active">Projects</a>
+      <a href="../research.html">Research</a>
+      <a href="../experience.html">Experience</a>
+      <a href="../index.html#contact">Contact</a>
+    </div>
+    <div class="nav-ctrls">
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle light/dark theme"><span class="tip">Switch mode</span></button>
+      <button class="icon-btn on" id="motion-toggle" aria-label="Toggle animations" aria-pressed="true">✦<span class="tip">Animations ON — click to disable</span></button>
+    </div>
+  </nav>
+</header>
+
+<div class="wrap page-hero">
+  <p class="breadcrumbs"><a href="../index.html">home</a> / <a href="index.html">projects</a> / attn-search</p>
+  <span class="eyebrow">// applied research · pytorch · 17 experiments</span>
+  <h1>🧭 Beyond Retrieval<br><span class="grad-text">Search paradigms that actually fit attention</span></h1>
+  <p><b style="color:var(--ink)">Tested seven attention mechanisms — none beat dense.</b> Then verified that verifier-guided decoding dominates attention selection by an order of magnitude. And a 10M model matched the 99.5M trunk at equal data exposure.</p>
+  <div class="chips" style="margin-top:18px">
+    <span class="chip hot">PyTorch</span><span class="chip">27-task arithmetic corpus</span><span class="chip">99.5M + 10.8M trunks</span><span class="chip">Leak-free &amp; matched-compute</span><span class="chip">Working paper</span>
+  </div>
+  <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap">
+    <a class="btn primary" href="../assets/papers/chapman-2026-search-paradigms.pdf" download>⬇ Download the paper</a>
+  </div>
+</div>
+
+<section style="padding-top:14px">
+  <div class="wrap">
+    <div class="grid g3" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+      <div class="feat reveal" data-detail="at-keys" data-kicker="// measurement" data-title="Attention is already a decision"><div class="bignum">~1.5</div><h3>effective keys</h3><p>Dense attention's exp-mean row entropy on this corpus. There was nothing left for seven retrieval mechanisms to prune.</p></div>
+      <div class="feat reveal d1" data-detail="at-critic" data-kicker="// measurement" data-title="A critic that costs nothing"><div class="bignum">0.928</div><h3>critic AUC, free at inference</h3><p>The model's own gold-token probability separates its right from wrong next tokens — strong enough to build search on.</p></div>
+      <div class="feat reveal d2" data-detail="at-verifier" data-kicker="// measurement" data-title="The one bit that matters"><div class="bignum">×9</div><h3>verifier over likelihood</h3><p>On identical samples at identical cost, an exact checker gained 9× what likelihood re-ranking could.</p></div>
+      <div class="feat reveal d3" data-detail="at-10m" data-kicker="// measurement" data-title="Capacity was never the constraint"><div class="bignum">10M ≈ 99.5M</div><h3>at equal data exposure</h3><p>The small trunk matched or beat the big one — token accuracy 0.361 vs 0.357, multi-step exact match 2–4× higher.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="eyebrow">// phase one · the null result</span><h2>Seven mechanisms, one shared trunk — nothing beat dense</h2>
+      <p>Each arm swapped the attention block of a shared ~99.5M-parameter trunk for an IR import. 3 seeds per arm on a leak-free 27-task arithmetic corpus. Accuracy column is pre-EOS-fix (inflated ~+0.09); read the Δ, not the level. <b style="color:var(--ink)">Click any arm.</b></p></div>
+    <table class="tbl reveal">
+      <thead><tr><th>arm</th><th>answer acc<sup>*</sup></th><th>Δ vs baseline</th><th>at equal time</th><th>eff. keys</th></tr></thead>
+      <tbody>
+        <tr data-detail="arm-ltr" data-kicker="// arm · learning-to-rank" data-title="LTR supervision on attention rows"><td>learning-to-rank</td><td>0.4657</td><td>+0.0161 (p=.029)</td><td style="color:var(--yellow)">+0.0001</td><td>51.1</td></tr>
+        <tr data-detail="arm-qexp" data-kicker="// arm · query expansion" data-title="PRF-style query expansion"><td>query expansion</td><td>0.4516</td><td>+0.0020</td><td>—</td><td>1.59</td></tr>
+        <tr data-detail="arm-mmr" data-kicker="// arm · MMR diversification" data-title="MMR-style diversification"><td>MMR diversification</td><td>0.4501 (n=1)</td><td>+0.0005</td><td>—</td><td style="color:var(--cyan)">65.9</td></tr>
+        <tr><td style="color:var(--ink-dim)">baseline (dense)</td><td style="color:var(--ink-dim)">0.4496</td><td style="color:var(--ink-dim)">—</td><td style="color:var(--ink-dim)">—</td><td style="color:var(--ink-dim)">1.46</td></tr>
+        <tr data-detail="arm-crawl" data-kicker="// arm · crawl budget" data-title="Crawl-budget allocation of context"><td>crawl budget</td><td>0.4476</td><td>−0.0020</td><td>—</td><td>2.02</td></tr>
+        <tr data-detail="arm-topk" data-kicker="// arm · top-k retrieval" data-title="Top-k sparse attention (k=32)"><td>top-k (k=32)</td><td>0.4475</td><td>−0.0021</td><td style="color:var(--yellow)">−0.0065</td><td>1.53</td></tr>
+        <tr data-detail="arm-index" data-kicker="// arm · inverted index" data-title="Inverted-index candidate generation"><td>inverted index</td><td>0.4428</td><td>−0.0068</td><td style="color:var(--red)">−0.0130</td><td style="color:var(--red)">1.21 ↓</td></tr>
+      </tbody>
+    </table>
+    <p class="reveal" style="color:var(--ink-faint);font-size:.85rem;margin-top:12px"><sup>*</sup> pre-fix answer-token accuracy; arm-vs-arm comparisons are unaffected by the EOS correction.</p>
+    <div class="callout reveal" style="margin-top:26px"><b>The diagnosis:</b> a trained transformer had already made the retrieval decision — and made it aggressively, concentrating on ~1.5 keys of a 15-token context. Selection-style mechanisms are vacuous here, not weak: <i>"we were tuning a filter over a distribution that had already collapsed."</i></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="eyebrow">// phase two · the asymmetry</span><h2>Verification dominates re-ranking — by an order of magnitude</h2>
+      <p>The diagnosis said stop selecting keys and start searching derivations. Every task has exactly checkable ground truth, so candidates can be <em>tested</em>, not just ranked. Pooled over 3 seeds, Tier-L checkpoints, 16 samples per rollout. <b style="color:var(--ink)">Click any row.</b></p></div>
+    <table class="tbl reveal">
+      <thead><tr><th>decoding method</th><th>exact match</th><th>vs greedy</th><th>cost ×</th></tr></thead>
+      <tbody>
+        <tr data-detail="m-bonv" data-kicker="// method · best_of_n_verif" data-title="Sample 16, keep the verified one"><td>best_of_n_verif</td><td style="color:var(--green)">0.1120 ±0.0075</td><td style="color:var(--green)">+0.0680</td><td>16.0</td></tr>
+        <tr data-detail="m-selfcons" data-kicker="// method · self-consistency" data-title="Verify + majority vote"><td>self_consistency (V+vote)</td><td>0.1111 ±0.0098</td><td>+0.0672</td><td>16.0</td></tr>
+        <tr data-detail="m-gated" data-kicker="// method · confidence-gated" data-title="Branch only where unsure"><td>gated_pure</td><td>0.0879 ±0.0083</td><td>+0.0439</td><td style="color:var(--yellow)">8.65</td></tr>
+        <tr data-detail="m-vgreedy" data-kicker="// method · verif_greedy" data-title="Constrained decoding — the free win"><td>verif_greedy</td><td>0.0525 ±0.0023</td><td style="color:var(--green)">+0.0086</td><td style="color:var(--green)"><b>1.00</b></td></tr>
+        <tr data-detail="m-bon" data-kicker="// method · best_of_n (likelihood)" data-title="Re-rank the same 16 by model likelihood"><td>best_of_n (likelihood)</td><td>0.0508 ±0.0034</td><td>+0.0069</td><td>16.0</td></tr>
+        <tr data-detail="m-vote" data-kicker="// method · vote_only" data-title="The control that makes it interpretable"><td>vote_only (no verifier)</td><td>0.0474 ±0.0034</td><td>+0.0034</td><td>16.0</td></tr>
+        <tr><td style="color:var(--ink-dim)">greedy</td><td style="color:var(--ink-dim)">0.0439 ±0.0030</td><td style="color:var(--ink-dim)">—</td><td style="color:var(--ink-dim)">1.00</td></tr>
+      </tbody>
+    </table>
+    <div class="callout reveal" style="margin-top:26px"><b>The isolation:</b> <code>best_of_n</code> and <code>best_of_n_verif</code> draw identical samples at identical cost and differ in one bit of information — whether an exact checker is consulted. Verifier value: <b>+0.0612</b>. Likelihood re-ranking of the same samples recovers +0.0069, about 11% of that. And <code>vote_only</code> — same compute, no verifier — buys +0.0034 (negative at Tier S). The gain is information the model does not possess.</div>
+  </div>
+</section>
+
+<section style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="eyebrow">// promotion · replication across arms</span><h2>The gains replicate on 7/7 arms — and compress the arm race to noise</h2>
+      <p>Inference-time methods, so promotion needed no training — just coverage. Both winners were measured on all seven attention arms at 99.5M.</p></div>
+    <table class="tbl reveal">
+      <thead><tr><th>arm</th><th>greedy EM</th><th>verif_greedy (1×)</th><th>best_of_n_verif (16×)</th><th>gain</th></tr></thead>
+      <tbody>
+        <tr data-detail="at-promote" data-kicker="// promotion finding" data-title="crawl_budget arm"><td>crawl_budget</td><td>0.0646</td><td>0.0672</td><td>0.1189</td><td style="color:var(--green)">+0.0543</td></tr>
+        <tr data-detail="at-promote" data-kicker="// promotion finding" data-title="topk_sparse arm"><td>topk_sparse</td><td>0.0594</td><td>0.0620</td><td>0.1214</td><td style="color:var(--green)">+0.0620</td></tr>
+        <tr data-detail="at-promote" data-kicker="// promotion finding" data-title="mmr_diversify arm"><td>mmr_diversify</td><td>0.0491</td><td>0.0594</td><td>0.1163</td><td style="color:var(--green)">+0.0672</td></tr>
+        <tr data-detail="at-promote" data-kicker="// promotion finding" data-title="query_expand arm"><td>query_expand</td><td>0.0491</td><td>0.0543</td><td>0.1111</td><td style="color:var(--green)">+0.0620</td></tr>
+        <tr data-detail="at-promote" data-kicker="// promotion finding" data-title="ltr_rank arm"><td>ltr_rank</td><td>0.0465</td><td>0.0491</td><td>0.1266</td><td style="color:var(--green)">+0.0801</td></tr>
+        <tr data-detail="at-promote" data-kicker="// promotion finding" data-title="uniform_mix arm"><td>uniform_mix</td><td>0.0439</td><td>0.0491</td><td>0.1292</td><td style="color:var(--green)">+0.0853</td></tr>
+        <tr data-detail="at-promote" data-kicker="// promotion finding" data-title="posting_index arm"><td>posting_index</td><td>0.0388</td><td>0.0491</td><td>0.1111</td><td style="color:var(--green)">+0.0724</td></tr>
+      </tbody>
+    </table>
+    <div class="callout reveal" style="margin-top:26px"><b>The sharpest statement of the thesis:</b> under greedy, the arms span 0.0388–0.0646 (1.67×). After verifier selection they span 0.1111–0.1292 (1.16×). <i>The attention mechanism that took 21 training runs to separate is worth less than the decoding policy applied afterwards.</i></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap two-col">
+    <div class="reveal">
+      <span class="eyebrow" style="font-family:var(--font-mono);color:var(--cyan);font-size:.8rem;letter-spacing:2.5px;text-transform:uppercase">// the unplanned result</span>
+      <h2 style="margin:10px 0 14px">The 99.5M trunk was never the constraint</h2>
+      <p style="color:var(--ink-dim)">A 10.8M-parameter screening tier (d=384/L6, ~3.5× faster steps) was built to save money. It produced the study's most interesting unplanned finding: at equal data exposure it matched or beat the 9.2×-larger trunk — test token accuracy <b style="color:var(--ink)">0.361 vs 0.357</b>, multi-step exact match <b style="color:var(--ink)">2–4× higher</b>.</p>
+      <p style="color:var(--ink-dim);margin-top:12px">The honest half: its replication gate <b style="color:var(--red)">failed for screening attention mechanisms</b> — the small model spreads over 7.8–12 effective keys where the big one holds ~1.5, so pruning arms would look better at Tier S purely because there is more to prune.</p>
+    </div>
+    <figure class="giffig reveal d1" data-zoom style="cursor:zoom-in">
+      <div class="bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#2ef773"></i><span>accuracy vs compute — where dense sits and why nothing moved it (click to zoom)</span></div>
+      <img src="../assets/img/figures/attn-fig7_pareto.png" alt="Pareto plot of accuracy versus compute across arms">
+    </figure>
+  </div>
+</section>
+
+<section style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="eyebrow">// methodology</span><h2>The corrections this study depends on</h2>
+      <p>An agenda built on inflated numbers is decoration. Three fixes that changed how every result must be read.</p></div>
+    <div class="grid g3">
+      <div class="feat reveal" data-detail="mm-eos" data-kicker="// correction" data-title="The metric bug, found and fixed"><div class="ic">🐛</div><h3>A free 95% hit per row</h3><p>The answer mask counted the EOS token as a scored position — inflating every headline by +0.092 absolute.</p></div>
+      <div class="feat reveal d1" data-detail="mm-compute" data-kicker="// correction" data-title="Equal steps is not equal compute"><div class="ic">⚖️</div><h3>Equal steps ≠ equal compute</h3><p>The one "winning" arm evaporated at matched wall-clock. Every mechanism now reports accuracy against cost.</p></div>
+      <div class="feat reveal d2" data-detail="mm-wiring" data-kicker="// correction" data-title="Null results from broken wiring"><div class="ic">🔌</div><h3>Tests of the seam, not the parts</h3><p>Two bugs made the verifier silently do nothing — and presented as evidence that search doesn't work.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="eyebrow">// figure gallery</span><h2>Selected figures <span style="font-size:.6em;color:var(--ink-faint)">(click to zoom)</span></h2></div>
+    <div class="fig-grid">
+      <figure class="fig-card reveal" data-zoom><img src="../assets/img/figures/attn-fig1_accuracy.png" alt="Answer accuracy by arm"><figcaption>Answer-token accuracy across arms and seeds</figcaption></figure>
+      <figure class="fig-card reveal" data-zoom><img src="../assets/img/figures/attn-fig2_lift.png" alt="Lift over trivial floor"><figcaption>Lift over the trivial floor — pre-fix, task-dependent distortion visible</figcaption></figure>
+      <figure class="fig-card reveal" data-zoom><img src="../assets/img/figures/attn-fig4_efficiency.png" alt="Accuracy versus compute by arm"><figcaption>Accuracy vs compute — where the equal-time correction moves each arm</figcaption></figure>
+      <figure class="fig-card reveal d1" data-zoom><img src="../assets/img/figures/attn-fig5_mechanism.png" alt="Effective attended keys per mechanism"><figcaption>Mechanism check: effective attended keys — LTR broadens, the index narrows</figcaption></figure>
+      <figure class="fig-card reveal d1" data-zoom><img src="../assets/img/figures/attn-fig7_pareto.png" alt="Pareto frontier of accuracy against compute"><figcaption>Pareto view: no arm leaves the dense frontier</figcaption></figure>
+      <figure class="fig-card reveal d1" data-zoom><img src="../assets/img/figures/attn-fig10_search.png" alt="Search and verification methods comparison"><figcaption>Phase two: verifier vs likelihood vs vote at matched cost</figcaption></figure>
+      <figure class="fig-card reveal d2" data-zoom><img src="../assets/img/figures/attn-fig11_headroom.png" alt="Per-task headroom of candidate sampling"><figcaption>Headroom per task — exactly zero on 9 of 19, where no sample ever verifies</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg2)">
+  <div class="wrap" style="text-align:center;padding-bottom:90px">
+    <h2 class="reveal">Read the whole thing</h2>
+    <p class="reveal d1" style="color:var(--ink-dim);margin:10px auto 24px;max-width:640px">Predictions, measurements, wrong predictions marked as wrong, and kill criteria that actually killed things — including a hand-written A* deleted for being vacuously perfect.</p>
+    <a class="btn primary reveal d2" href="../assets/papers/chapman-2026-search-paradigms.pdf" download>⬇ Download the paper (PDF)</a>
+  </div>
+</section>
+
+<div hidden>
+  <div id="at-keys"><p><b>exp(mean row entropy) ≈ 1.5 keys.</b> A trained transformer on this corpus concentrates its attention on about one and a half keys — it has already made the retrieval decision that all seven mechanisms were trying to make better, and made it aggressively.</p>
+    <ul><li>Top-32 selection over a 20-key support is not a hypothesis, it's an identity — asserted in tests: at k ≥ T, top-k attention <em>equals</em> dense attention.</li>
+    <li>76% of training rows are shorter than 32 tokens, so for most of the data the sparse arms were provably the baseline with extra arithmetic.</li></ul>
+    <p><b>Consequence:</b> selection-style mechanisms are vacuous here, not weak. You cannot prune a distribution that has already collapsed.</p></div>
+  <div id="at-critic"><p>Every trajectory-search method needs a value function. This one exists for free: score how well the model's own probability on the gold token separates its correct from incorrect next tokens (Mann–Whitney AUC, EOS excluded).</p>
+    <ul><li>7,034 correct vs 12,798 wrong positions → <b>AUC 0.928</b>. For context: 0.5 is noise, 0.7 is usually enough to build on.</li>
+    <li>Mean probability on gold: 0.621 (correct) vs 0.171 (wrong); next-token entropy 0.837 vs 1.997.</li>
+    <li>The property that matters for search: at the <b>first</b> error the model is already as unsure (p=0.168) as at later cascaded errors (p=0.172). Derailment announces itself at the moment of derailment.</li></ul>
+    <p>The failure mode is compositional, and there's a near-perfect signal for where composition breaks — an open invitation to search over derivations, not keys.</p></div>
+  <div id="at-verifier"><p>Likelihood-based decoding is bounded above by model accuracy. Verification is not bounded that way at all — that asymmetry is the whole result.</p>
+    <ul><li><code>best_of_n</code> vs <code>best_of_n_verif</code>: identical samples, identical 16× cost, one bit of difference — an exact checker. Verifier value: <b>+0.0612</b>.</li>
+    <li>Likelihood re-ranking of the same samples recovers +0.0069 — ~11% of what verification achieves. Re-ranking cannot promote an answer the model ranks below a wrong one.</li>
+    <li><code>vote_only</code> (same 16 samples, majority vote, no verifier): +0.0034 at Tier L, −0.0026 at Tier S. Extra compute alone buys essentially nothing; the gain is information the model does not possess.</li></ul>
+    <p>Roughly an order of magnitude — measured, isolated, and replicated on 7/7 arms.</p></div>
+  <div id="at-10m"><p>The screening tier was meant to save money; it produced a finding. At equal data exposure the 10.8M trunk (d=384/L6/H6) matched or beat the 99.57M one: test token accuracy <b>0.361 vs 0.357</b>, multi-step exact match <b>2–4× higher</b>, at ~3.5× faster steps.</p>
+    <ul><li>Trunk capacity was never the binding constraint on this corpus — which retroactively justifies the suspicion that model size was not where the study's cost should go.</li>
+    <li>The immediate win isn't shrinking: it's rescoring saved checkpoints and running inference-only experiments instead of retraining. Most of the phase-two results required zero training runs.</li></ul>
+    <p><b>The honest half:</b> the Tier-S replication gate failed for screening attention mechanisms — 7.8–12 effective keys vs the big model's ~1.5 regime, so pruning arms would look better at 10M purely because there is more to prune. "Plausible-looking negatives are the most expensive kind of cheap result." It passed critic AUC (0.939–0.964), which is exactly why inference-time search replicated at both tiers.</p></div>
+  <div id="arm-ltr"><p><b>What it was:</b> learning-to-rank supervision applied to attention rows — the most promising arm, and the most instructive failure.</p>
+    <ul><li>Pre-fix accuracy +0.0161 over baseline (p=.029) — a real-looking win across 3 seeds.</li>
+    <li>At equal <em>wall-clock</em> instead of equal steps: <b>+0.0001</b>. The arm trains 22% slower per step; the "win" was compute, not ranking.</li>
+    <li>Its only durable effect: attention went 35× broader (51.1 effective keys vs 1.46).</li></ul>
+    <p><b>Why it's interesting:</b> MMR diversification broadens attention even more (65.9) and buys +0.0005 — so spread alone doesn't explain the LTR effect either. "What caused it" stays open; "it was not free compute" does not.</p></div>
+  <div id="arm-qexp"><p><b>What it was:</b> pseudo-relevance feedback transplanted from IR — expand the query using likely-relevant context, then attend with the expanded representation.</p>
+    <ul><li>Δ +0.0020; step cost +68% (the most expensive arm per step).</li>
+    <li>The premise fails structurally: PRF exists because queries are ambiguous. Here the prompt is exact — there is no query ambiguity to expand away.</li></ul>
+    <p><b>Replacement:</b> subgoal decomposition generates new "queries" legitimately (AO* over verifiable subgoals).</p></div>
+  <div id="arm-mmr"><p><b>What it was:</b> maximal marginal relevance — diversify attention to avoid redundant keys.</p>
+    <ul><li>Δ +0.0005 at n=1 (still running when the table froze); step cost +25%.</li>
+    <li>Broadest attention of any arm: 65.9 effective keys — and the smallest gain that matters.</li></ul>
+    <p><b>Why it matters:</b> it's the control that kills "broader attention = better" as an explanation for anything, including the LTR arm's original +0.016.</p></div>
+  <div id="arm-crawl"><p><b>What it was:</b> crawl-budget allocation — spend limited context budget on the most promising keys, like a spider deciding which URLs to fetch.</p>
+    <ul><li>Δ −0.0020; step cost +96% (the slowest arm).</li>
+    <li>Nothing to exclude from a 15-token context — the budget has nothing to refuse.</li></ul>
+    <p><b>The idea survived, reframed:</b> "spend limited resource where marginal value is highest" becomes per-token compute allocation — confidence-gated decoding in phase two is exactly that. The IR wrapper was wrong; the economics underneath were right.</p></div>
+  <div id="arm-topk"><p><b>What it was:</b> sparse attention — keep only the top-32 keys per row, the classic efficiency move.</p>
+    <ul><li>Δ −0.0021 → <b>−0.0065 at equal time</b>.</li>
+    <li>76% of training rows are shorter than 32 tokens: for most data the arm was provably the baseline with extra arithmetic.</li></ul>
+    <p>The k-sweep {1,2,4,8} confirms where selection starts to bite — and that it bites only when you remove one of the ~1.5 keys that mattered.</p></div>
+  <div id="arm-index"><p><b>What it was:</b> an inverted index inside attention — posting lists generating candidate keys per query, the literal search-engine architecture.</p>
+    <ul><li>Δ −0.0068 → <b>−0.0130 at equal time</b>: the worst arm.</li>
+    <li>The tell of the whole study: effective keys went <em>down</em>, 1.46 → 1.21. An index exists to surface documents a flat scan would miss; here it threw away the one or two keys that mattered on top of an already-degenerate distribution.</li></ul>
+    <p><b>Lesson:</b> restricting candidates is only useful when there are too many. There weren't.</p></div>
+  <div id="m-bonv"><p><b>How it works:</b> sample k=16 complete answers, run each through exact task verifiers (integer arithmetic checked in closed form, element conservation for chemistry), return a verified answer rather than the most likely one.</p>
+    <ul><li>+0.0680 over greedy — the study's largest effect at 16× cost.</li>
+    <li>Replicated on all seven arms (+0.054 to +0.085) and both model tiers (+0.061 Tier L, +0.074 Tier S).</li></ul>
+    <p><b>The bound, stated honestly:</b> verification can only select what generation produced. Per-task headroom is exactly zero on 9 of 19 tasks — no sample out of 24 ever verifies there, and no selection policy (best-first, MCTS, A*, arbitrary oracle over samples) can help. Aggregate numbers mix powerful with provably inert; report coverage first.</p></div>
+  <div id="m-selfcons"><p><b>How it works:</b> sample k paths, keep those that pass the verifier, majority-vote among survivors. Verification plus self-consistency — the verifier prunes, the vote breaks ties between equally valid-looking derivations.</p>
+    <ul><li>+0.0672 at 16× cost — statistically indistinguishable from pure verified best-of-n here.</li>
+    <li>Without the verifier (vote_only) the same machinery buys +0.0034. The vote isn't doing the work; it's just not hurting.</li></ul></div>
+  <div id="m-gated"><p><b>How it works:</b> decode greedily while the model is confident; escalate to branching with the critic when probability mass spreads. Cheapest possible trajectory search — no training, the gate is the 0.928-AUC signal itself.</p>
+    <ul><li>Gain +0.0439 — but at <b>8.65× cost</b>, missing §4's predicted &lt;1.5× by roughly 6×.</li>
+    <li>Why: mean per-token logprob is low on most arithmetic answers, so an average-logprob threshold escalates constantly (209 of 387 rows). A better gate would be entropy-per-position or an explicit abstain head. Mechanism sound; cost model wrong — marked as wrong rather than quietly dropped.</li>
+    <li><b>Oracle-leakage check:</b> the variant allowed to ask the verifier "did greedy already succeed?" gained +0.0672 at 13.4× vs +0.0439 at 8.65× without peeking — ~0.023 of optimism, put on the record by reporting both.</li></ul></div>
+  <div id="m-vgreedy"><p><b>How it works:</b> constrain each decoding step to tokens that keep some valid completion alive — the verifier prunes the vocabulary per step, so an invalid digit can never be emitted. Changes <em>which</em> token is chosen rather than adding rollouts.</p>
+    <ul><li>+0.0086 at <b>1.00× cost</b> — the only mechanism in the entire study, attention arms included, that improves accuracy without paying for it.</li>
+    <li>Where verification bites is format, not cleverness: on TASK_CMP the checker prunes to 0.8% of vocabulary after one token (a three-way choice); on free-length integer arithmetic it prunes nothing — exactly the ten digits are admissible.</li></ul>
+    <p>It also turned out to be the non-vacuous form of the abandoned carry-state A*: a hand-written transition function over (column, carry) <em>is</em> the answer and measures nothing. Constrained decoding gets the same benefit legitimately — constraint checking from arithmetic, transitions from the model.</p></div>
+  <div id="m-bon"><p><b>How it works:</b> sample k=16 answers, keep the highest-likelihood one. IR's core move — rank candidates by a score the model already has.</p>
+    <ul><li>+0.0069 at 16× cost: ~11% of what the verifier achieves on identical samples.</li>
+    <li>The concrete form of the ceiling: re-ranking cannot promote an answer the model ranks below a wrong one. Ranking is bounded by the model; testing isn't.</li></ul></div>
+  <div id="m-vote"><p><b>How it works:</b> sample k=16, majority vote, no verifier at all. The control that makes the whole phase-two table interpretable.</p>
+    <ul><li>+0.0034 at Tier L; <b>−0.0026</b> at Tier S. Extra compute alone buys essentially nothing — sometimes less than nothing.</li>
+    <li>Compare best_of_n_verif on the same samples: +0.0680. The difference is not more sampling, more voting, or more cleverness — it's information from outside the model that costs nothing to obtain.</li></ul></div>
+  <div id="at-promote"><p><b>The promotion finding:</b> both phase-two winners are inference-time methods sharing weights with whatever arm they're applied to — so promoting them across all seven arms required no training, only coverage (everything before had been measured on baseline checkpoints alone).</p>
+    <ul><li><b>Replication:</b> verification helps on 7/7 arms (+0.054 to +0.085). Not an artifact of the checkpoint it was discovered on.</li>
+    <li><b>Compression:</b> under greedy the arms span 0.0388–0.0646 (1.67×); after verifier selection, 0.1111–0.1292 (1.16×).</li></ul>
+    <p>The attention mechanism that took 21 training runs to separate is worth less than the decoding policy applied afterwards — the study's main thesis in one row-span comparison.</p></div>
+  <div id="mm-eos"><p><b>The bug:</b> every dataset row appends an end-of-sequence token, and the answer mask counted it as a scored answer position — one free, ~95%-predictable hit per row.</p>
+    <ul><li>Measured on baseline: accuracy 0.952 on those 15.4% of positions vs <b>0.358</b> on real answer tokens — headline inflated <b>+0.092 absolute</b>.</li>
+    <li>Distortion is task-dependent (largest for short answers), so per-task rankings and every "lift over trivial floor" figure were overstated.</li></ul>
+    <p>Arm-vs-arm comparisons hold; absolute claims do not. Fixed with a permanent assertion that no scored position targets EOS — marked [pre-fix] throughout the paper until rescored from saved checkpoints.</p></div>
+  <div id="mm-compute"><p><b>The trap:</b> comparing arms at equal optimizer steps hides that they cost different amounts per step: query expansion +68%, crawl budget +96%, MMR +25%, LTR +22% over baseline.</p>
+    <ul><li>The one arm that beat dense (+0.0161) became +0.0001 at matched wall-clock. The worst arm's deficit grew.</li>
+    <li>Every mechanism in the study must report accuracy against cost — candidates consumed, forward passes, seconds — not just accuracy.</li></ul>
+    <p>This is why the phase-two tables carry a cost column: verif_greedy at 1.00× means something that +0.0069 at 16× does not.</p></div>
+  <div id="mm-wiring"><p><b>The failure mode:</b> two separate bugs made the verifier silently do nothing — a missing vocab argument swallowed by an "undecidable" exception guard, and a trailing EOS making exact match 0.00 on every row. Both presented as <em>evidence that search does not work</em>, while unit tests of verifier logic passed throughout.</p>
+    <ul><li>The fix that matters is <code>tests/test_search_wiring.py</code>: asserts the seam — no un-vocab'd verifier calls, no EOS leaking into answers, selection must equal its oracle.</li>
+    <li>A verifier must be tested against the generator, not against intuition: ground-truth-must-verify, perturbed-must-reject, and <b>no true prefix may ever be pruned</b> — that last test caught three of four verifier bugs. It's the one nobody writes unless they've been burned.</li></ul></div>
+</div>
+
+<footer class="site-foot">
+  <div class="wrap foot-grid">
+    <a class="brand" href="../index.html"><img src="../assets/img/logo-master.png" alt="" width="30" height="30"><span>Shane Chapman</span></a>
+    <span class="mono">Working paper · source on personal GitLab · <a href="../assets/papers/chapman-2026-search-paradigms.pdf" download>paper PDF ↗</a></span>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

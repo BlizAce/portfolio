@@ -249,3 +249,7 @@ body.no-motion #neural-canvas{display:none}
 [data-detail]{cursor:pointer}
 .tbl tbody tr[data-detail]:hover td:first-child{text-decoration:underline dotted var(--violet);text-underline-offset:5px}
 .tbl tbody tr[data-detail] td:last-child::after{content:" ⓘ";color:var(--ink-faint)}
+
+/* big-number tiles */
+.bignum{font-family:var(--font-mono);font-size:1.75rem;font-weight:700;background:var(--grad);
+  -webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:6px}

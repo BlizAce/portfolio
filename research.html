@@ -33,6 +33,7 @@
   <h1>Evaluation controls for<br><span class="grad-text">architecture research</span></h1>
   <p>Six small-scale architecture projects, each producing at least one result that was <em>plausible, internally consistent, reviewed by us — and wrong</em>. None caught by a reviewer or a loss curve. Every one caught by a control we then added and named.</p>
   <div class="callout reveal" style="max-width:760px;margin-top:26px"><b>The one-sentence summary:</b> a metric you have not gated is a hypothesis, and an architecture claim you have not attacked with a matched control is a story.</div>
+  <p class="reveal" style="margin-top:22px;color:var(--ink-dim);max-width:760px">The newest outcome of this program: <a href="projects/attn-search.html"><b>Beyond Retrieval</b></a> — seven attention mechanisms tested, none beat dense at matched compute; verifier-guided decoding then dominated attention selection by an order of magnitude.</p>
 </div>
 
 <section style="padding-top:20px">
@@ -121,6 +122,8 @@
       <p>Every number in these papers is quoted verbatim from a named artifact in one of the six source projects. Reproducible harness included: training pipelines, benchmark scripts, ablation framework and provenance audits.</p></div>
     <div class="grid g3">
       <a class="feat reveal" href="assets/papers/chapman-2026-evaluation-protocol.pdf" download style="color:inherit;text-decoration:none"><div class="ic">📕</div><h3>Evaluation Controls for Architecture Research</h3><p>The protocol paper: eight primary controls + two secondary, each with its case study, procedure and measured cost. <em>25 pp · 1.6 MB</em></p><span class="chip hot">⬇ PDF</span></a>
+      <div class="feat reveal"><div class="ic">📒</div><h3>Beyond Retrieval — Search Paradigms That Fit Attention</h3><p>17 experiments: seven IR-imported attention arms, the matched-compute corrections, and verification dominating re-ranking 9-to-1. <em>116 KB</em></p>
+      <p style="margin-bottom:10px"><a class="chip hot" href="assets/papers/chapman-2026-search-paradigms.pdf" download style="display:inline-block;text-decoration:none">⬇ PDF</a> &nbsp; <a href="projects/attn-search.html">Full case study →</a></p></div>
       <a class="feat reveal" href="assets/papers/chapman-2025-matched-cost-routing.pdf" download style="color:inherit;text-decoration:none"><div class="ic">📗</div><h3>Paper 1 — Parameter Sharing Is Not Compute Sharing</h3><p>Matched-cost study of fractal/recursive routing at ≤10M params. Dense dominates 5 of 5; oracle headroom +0.00 pts. <em>56 KB</em></p><span class="chip hot">⬇ PDF</span></a>
       <a class="feat reveal" href="assets/papers/chapman-2025-metastable-forward-map.pdf" download style="color:inherit;text-decoration:none"><div class="ic">📘</div><h3>Paper 2 — Metastable Success</h3><p>High accuracy with a diverging forward map: one missing LayerNorm, causality established five ways, init-time pre-flight test. <em>112 KB</em></p><span class="chip hot">⬇ PDF</span></a>
       <a class="feat reveal d1" href="assets/papers/chapman-2025-scale-recursive-routing.pdf" download style="color:inherit;text-decoration:none"><div class="ic">📙</div><h3>Paper 3 — Scale-Recursive Routing</h3><p>Recursion across scales, degree-matched controls and seed replication across the outer and inner axes. <em>284 KB</em></p><span class="chip hot">⬇ PDF</span></a>
